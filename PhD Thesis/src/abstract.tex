@@ -1,102 +1,13 @@
-\documentclass{thesis}
-
-\usepackage{amsthm}
-\usepackage{charter}
-\usepackage{eulervm}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{caption}
-\usepackage{subcaption}
-\usepackage{enumerate}
-\usepackage{cancel}
-\usepackage{hyperref}
-\usepackage{makeidx}
-\usepackage{footmisc}
-\usepackage{mathrsfs}
-\usepackage{float}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}
-\newtheorem{definition}{Definition}
-\newtheorem{corollary}{Corollary}
-\newtheorem{lemma}{Lemma}
-\newtheorem{example}{Example}
-
-\floatstyle{ruled}
-\newfloat{pseudo}{h}{lop}
-\floatname{pseudo}{Algorithm}
-
-%\let\doendproof\endproof
-%\renewcommand\endproof{~\hfill\qed\doendproof}
-
-\usepackage{color}
-\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
-
-\newcommand{\argmin}{\mathop{\arg\min}}
-%\DeclareMathOperator*{\argmin}{\arg\,\min}
-\DeclareMathOperator*{\argmax}{\arg\,\max}
-\DeclareMathOperator*{\nid}{NID}
-\DeclareMathOperator*{\id}{ID}
-
-\newcommand{\sdr}[1]{\textcolor{blue}{\small #1\textsuperscript{[sdr]} }}
-\newcommand{\pb}[1]{\textcolor{OliveGreen}{\small #1 \textsuperscript{[pb]} }}
-
-\newcommand{\p}{\,\text{.}}
-\newcommand{\fl}[1]{\left \lfloor #1 \right \rfloor}
-\newcommand{\g}[1]{\color{gray} #1 \color{black}}
-\newcommand{\B}{{\mathbb B}}
-\newcommand{\R}{{\mathbb R}}
-\newcommand{\N}{{\mathbb N}}
-\newcommand{\C}{{\cal C}}
-\newcommand{\M}{{\cal M}}
-\newcommand{\T}{{\cal T}}
-\newcommand{\F}{{\cal F}}
-\renewcommand{\P}{\mathscr P}
-\newcommand{\K}{{\cal K}}
-\newcommand{\X}{{\cal X}}
-\newcommand{\D}{\Delta}
-\newcommand{\Nm}{{\cal N}}
-\newcommand{\m}{{\overline{m}}}
-\newcommand{\ok}{{\overline{\kappa}}}
-\newcommand{\mmid}{\;\middle|\;}
-\newcommand{\tn}[1]{\textnormal{#1}}
-\newcommand{\pair}[1]{\left\langle{#1}\right\rangle}
-\newcommand{\tuple}[1]{\left\langle{#1}\right\rangle}
-\newcommand{\concat}{\oplus}
-\newcommand{\symb}[1]{\texttt{#1}}
-\newcommand{\br}[1]{\overline{#1}}
-\newcommand{\s}{S}
-\newcommand{\bi}{\bar\imath}
-\newcommand{\dom}[1]{\mathop{\tn{dom}(#1)}}
-\newcommand{\range}[1]{\mathop{\tn{range}(#1)}}
-\newcommand{\Cc}{C_\tn{comp}}
-\newcommand{\G}{{\mathbb G}}
-\newcommand{\cG}{{\mathcal G}}
-\newcommand{\tab}{\hspace*{5mm}}
-\newcommand{\bD}{\boldsymbol\Lambda}
-\newcommand{\bm}{\boldsymbol\mu}
-\newcommand{\cN}{{\cal N}}
-\newcommand{\bs}[1]{{\boldsymbol {#1} }}
-
-\newcommand{\hide}[1]{}
+\documentclass{scrartcl}
 
 \title{Single sample statistics}
-\date{\today}
+\subtitle{thesis abstract}
+\date{}
 
-% non-indented, spaced paragraphs
-\setlength{\parindent}{0.0in}
-\setlength{\parskip}{0.1in}
-
-\makeindex
-
-\begin{document}
+\begin{document} 
 
 \maketitle
 
-\tableofcontents
-
-\chapter{Summary}
 \noindent What can be learned from a single example? If we are faced with some complex process, producing large intricate constructs, but we are only given one example of its output, can we still draw conclusions about the source, or ascribe meaning to the patterns we find? This is by no means an academic exercise: we only have one Internet, for example, only one climate system and only one global financial system. What assumptions must we make about the processes that generated them, in order to learn about their structure? What can we do if we make no assumptions at all? Each chapter of this dissertation studies a perspective on this question, starting with a high-level theoretical approach, and gradually working towards more practical aspects. 
 
 The first chapter provides an informal introduction to this question, and the tools we use to study it. In \textbf{Chapter~2}, we view the problem in its most general form, using the principle of \emph{Kolmogorov complexity}. Kolmogorov complexity makes only one assumption: that the source of the data can be understood as a computational process. Under this assumption, it gives us an objective definition of the data's \emph{information content}. As is well known, the incomputable Kolmogorov complexity can be bounded from above by computable means. We show that with additional assumptions about the source of the data, such as its computational complexity, we can compute a value that is not just an upper bound, but also, with high probability, a good approximation. We also analyze functions derived from Kolmogorov complexity, such as the \emph{normalized information distance}: we show that good approximations to Kolmogorov complexity do not necessarily translate to good approximations of derived functions, but with careful analysis, we can provide some guarantees.
@@ -109,55 +20,20 @@ Where the previous chapter studies the recurrence of similar structures at the s
 
 The field of statistics is divided neatly by the type of data under analysis. The available models and techniques differ sharply from times series data to sets of iid samples, to geospatial information. The perspective of single sample statistics provides us with a general perspective: it shows that in all cases we are dealing with a single, finite example from some partially random, computable source. The type of the data is simply an assumption we make about its source, usually to let us divide the data in chunks, so that the similarities and differences between these chunks will let us reconstruct the source from the data. This view is instructive when we are faced with modern types of data like complex graphs, where the question of how to subdivide the data is not easily answered. The perspective of single sample statistics gives us a starting point: we can always consider the data a single sample from some computable distribution.
 
-\chapter{Introduction}
+\section{Chapter abstracts}
 
-\input{1-introduction}
+\subsection{Chapter 2}
+Kolmogorov complexity ($K$) is an incomputable function. It can be approximated from above but not to arbitrary given precision and it cannot be approximated from below. By restricting the source of the data to a specific model class, we can construct a computable function $\overline{\kappa}$ to approximate $K$ in a probabilistic sense: the probability that the error is greater than $k$ decays exponentially with $k$. We apply the same method to the normalized information distance (NID) and discuss conditions that affect the safety of the approximation.
 
-\chapter{A safe approximation of Kolmogorov complexity}
+\subsection{Chapter 3}
+Kolmogorov complexity measures the amount of information in data, but does not distinguish structure from noise. Kolmogorov's definition of the \emph{structure function} was the first attempt to measure only the structural information in data, by measuring the complexity of the smallest model that allows for optimal compression of the data. Since then, many variations of this idea have been proposed, for which we use \emph{sophistication} as an umbrella term. We describe two fundamental problems with existing proposals, showing many of them to be unsound. Consequently, we put forward the view that the problem is fundamental: it may be impossible to objectively quantify the sophistication.
 
-\input{2-safe}
+\subsection{Chapter 4}
 
-\chapter{The problem of sophistication}
+We introduce a new measure of relevance for \emph{network motif analysis}---the use of frequent subgraphs of a network to explore its structure. In such analyses, it is crucial to compare the frequency of a subgraph in the data to its expected frequency under a \emph{null-model}. To compute this significance, the search for motifs is normally repeated on as many as 1000 random graphs sampled from the null model; a prohibitively expensive step. We avoid this by explicitly computing the probability of the graph, first under the null model, and then under a second probability model, which is biased towards high-frequency subgraphs. If the latter assigns the data a higher probability, we can reject the null-model. We use the Minimum Description Length principle to construct this second  motif model. Our method allows the analysis of motifs to scale to networks with millions of nodes, provided that a fast null model is used. 
 
-\input{3-problem}
+\subsection{Chapter 5}
 
-\chapter{Compression as network motif relevance}
-
-\input{4-motifs}
-
-\chapter{A variational algorithm for the fractal iunverse problem}
-
-\input{5-fractals}
-
-\chapter{Single sample inference}
-
-\input{6-conclusion}
-
-\bibliographystyle{plain}
-\bibliography{thesis}
-
-\appendix 
-\chapter{Tutorials}
-\begin{summary}
-This appendix provides brief introductions to the subjects that are required to understand this thesis. They illustrate the use of our notation and provide a concise basis for readers who are well-versed in mathematics and computer science, but lack knowledge of these specific subjects. 
-\end{summary}
-
-\section{Kolmogorov complexity}
-
-
-\section{Recommended literature}
-
-\chapter{Symbols and Terms}
-
-\begin{description}
- \item[$K(\cdot)$]
- \item[$k(\cdot)$]
- \item[Shannon Entropy]
-\end{description}
-
-\chapter{Algorithms and techniques}
-\chapter{Proofs}
-\chapter{index}
-\printindex
+We present an variational algorithm to solve the \emph{inverse problem} for iterated function systems (IFS). The central idea is to treat the particular sequence of components that leads to a particular point as a latent variable. If we are given such a \emph{code} for each point in the data, we know which points should map to one another under each transformation of the IFS, allowing us to reconstruct these transformations. Given the transformations, it is easy find out which code to assign to each point. Iterating these two steps provides us with a basic algorithm to fit an IFS model to data. The variational Bayes framework allows us take additional factors, such as iteration depth, and affine transformations of the data into account, so that our model also functions as a generalization of the mixture-of-Gaussians model.
 
 \end{document}
