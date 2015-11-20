@@ -22,7 +22,7 @@
 \newtheorem{corollary}{Corollary}
 \newtheorem{lemma}{Lemma}
 \newtheorem{example}{Example}
-
+\setcounter{tocdepth}{4}
 \floatstyle{ruled}
 \newfloat{pseudo}{h}{lop}
 \floatname{pseudo}{Algorithm}
@@ -79,8 +79,11 @@
 \newcommand{\cN}{{\cal N}}
 \newcommand{\bs}[1]{{\boldsymbol {#1} }}
 \newcommand{\hide}[1]{}
+\newcommand{\ol}[1]{\overline{#1}}
 
-\title{Single sample statistics}
+\setcounter{tocdepth}{1}
+
+\title{The single sample setting \\ \normalsize \emph{Exercises in learning from just one example}}
 \date{\today}
 
 % non-indented, spaced paragraphs
@@ -95,68 +98,70 @@
 
 \tableofcontents
 
-\chapter{Summary}
-\noindent What can be learned from a single example? If we are faced with some complex process, producing large intricate constructs, but we are only given one example of its output, can we still draw conclusions about the source, or ascribe meaning to the patterns we find? This is by no means an academic exercise: we only have one Internet, for example, only one climate system and only one global financial system. What assumptions must we make about the processes that generated them, in order to learn about their structure? What can we do if we make no assumptions at all? Each chapter of this dissertation studies a perspective on this question, starting with a high-level theoretical approach, and gradually working towards more practical aspects. 
+\chapter*{Summary}
+\noindent What can be learned from a single example? If we are faced with some complex process, producing large intricate constructs, but we are only given one example of its output, can we still draw conclusions about the source, or ascribe meaning to the patterns we find? This is by no means just an academic exercise: we only have one Internet, for example, only one climate system and only one global financial system. What assumptions must we make about the processes that generated them, in order to learn about their structure? What can we do if we make no assumptions at all? Each chapter of this dissertation studies a perspective on this question, starting with a high-level theoretical approach, and gradually working towards more practical aspects.
+ 
+The first chapter provides an informal introduction to this question, and the tools we use to study it. In \textbf{Chapter~\ref{chapter:safe}}, we view the problem in its most general form, using the principle of \emph{Kolmogorov complexity}. Kolmogorov complexity makes only one assumption: that the source of the data can be understood as a computational process. Under this assumption, it gives us an objective definition of the data's \emph{information content}. As is well known, the incomputable Kolmogorov complexity can be bounded from above by computable means. We show that with additional assumptions about the source of the data, such as its computational complexity, we can compute a value that is not just an upper bound, but also, with high probability, a good approximation. We also analyze functions derived from Kolmogorov complexity, such as the \emph{normalized information distance}: we show that good approximations to Kolmogorov complexity do not necessarily translate to good approximations of derived functions, but with careful analysis, we can provide some guarantees.
 
-The first chapter provides an informal introduction to this question, and the tools we use to study it. In \textbf{Chapter~2}, we view the problem in its most general form, using the principle of \emph{Kolmogorov complexity}. Kolmogorov complexity makes only one assumption: that the source of the data can be understood as a computational process. Under this assumption, it gives us an objective definition of the data's \emph{information content}. As is well known, the incomputable Kolmogorov complexity can be bounded from above by computable means. We show that with additional assumptions about the source of the data, such as its computational complexity, we can compute a value that is not just an upper bound, but also, with high probability, a good approximation. We also analyze functions derived from Kolmogorov complexity, such as the \emph{normalized information distance}: we show that good approximations to Kolmogorov complexity do not necessarily translate to good approximations of derived functions, but with careful analysis, we can provide some guarantees.
+\textbf{Chapter\ref{chapter:problem}} deals with model selection. Given only a single sample, what can we say about the complexity of its source? How much of the data is structure, and how much is random? This question has been studied under many names, like \emph{sophistication}, the \emph{algorithmic sufficient statistic} and  \emph{effective complexity}. We show that all these approaches have fundamental problems: the functions proposed \emph{cannot} correspond to the intuition that inspired them. It remains an open question whether objective model selection in this setting is possible, but we provide several arguments that suggest the answer is negative.
 
-\textbf{Chapter~3} deals with model selection. Given only a single  sample, what can we say about the complexity of its source? How much of the data is structure, and how much is random? This question has been studied under many names, like \emph{sophistication}, the \emph{algorithmic sufficient statistic} and  \emph{effective complexity}. We show that all these approaches have fundamental problems: the functions proposed \emph{cannot} correspond to the intuition that inspired them. It remains an open question whether objective model selection in this setting is possible, but we provide several arguments that suggest the answer is negative.
+In \textbf{Chapter~\ref{chapter:fractals}} we turn to a practical application of the single sample setting: large complex graphs. These are complex objects, with rich internal structure, but no straightforward way to divide the data into chunks with similar properties. One solution is to find small, frequently recurring subgraphs, known as \emph{network motifs}. However, the fact that a subgraph is frequent is by itself no indication that it is a meaningful pattern: many subgraphs occur frequently, simply by chance. To show that a particular subgraph is special, we must show that its occurrences are \emph{unexpected} for a particular source. Using the Minimum Description Length principle, the practical cousin of Kolmogorov complexity, we develop a fast way to judge whether such subgraphs are unexpected. This allows motif analysis to scale to much larger graphs than was possible with traditional techniques.
 
-In \textbf{Chapter~4} we turn to a practical application of the single sample setting: large complex graphs. These are complex objects, with rich internal structure, but no straightforward way to divide the data into chunks with similar properties. One solution is to find small, frequently recurring subgraphs, know as \emph{network motifs}. However, the fact that a subgraph is frequent is by itself no indication that it is a meaningful pattern: many subgraphs occur frequently, simply by chance. To show that a particular subgraph is special, we must show that its occurrences are \emph{unexpected} for a particular source. Using the Minimum Description Length principle, the practical cousin of Kolmogorov complexity, we develop a fast way to judge whether such subgraphs are unexpected. This allows motif analysis to scale to much larger graphs than was possible with traditional techniques.
+Where the previous chapter studies the recurrence of similar structures at the same scale, \textbf{Chapter~\ref{chapter:fractals}} investigates \emph{self-similarity}: the recurrence of the same structure across scales. This is often a crucial assumption in graph analysis: we cannot analyse the whole of the World Wide Web, so we assume that a large subgraph, extracted from a random walk, has the same properties as the whole. Learning self-similar structure is known as the \emph{fractal inverse problem}, a long-standing open question. We analyze the fractal inverse problem in the domain of point patterns in Euclidean spaces, and show that it can be solved using an EM algorithm. 
 
-Where the previous chapter studies the recurrence of similar structures at the same scale, \textbf{Chapter~5} investigates \emph{self-similarity}: the recurrence of the same structure across scales. This is often a crucial assumption in graph analysis: we cannot analyse the whole of the World Wide Web, so we assume that a large subgraph, extracted from a random walk, has the same properties as the whole. Learning self-similar structure is known as the \emph{fractal inverse problem}, a long-standing open question. We analyze the fractal inverse problem in the domain of point patterns in Euclidean spaces, and show that it can be solved using the variational Bayes approach. 
-
-The field of statistics is divided neatly by the type of data under analysis. The available models and techniques differ sharply from times series data to sets of iid samples, to geospatial information. The perspective of single sample statistics provides us with a general perspective: it shows that in all cases we are dealing with a single, finite example from some partially random, computable source. The type of the data is simply an assumption we make about its source, usually to let us divide the data in chunks, so that the similarities and differences between these chunks will let us reconstruct the source from the data. This view is instructive when we are faced with modern types of data like complex graphs, where the question of how to subdivide the data is not easily answered. The perspective of single sample statistics gives us a starting point: we can always consider the data a single sample from some computable distribution.
+The field of statistics is divided neatly by the type of data under analysis. The available models and techniques differ sharply from times series to sets of iid. samples, to geospatial information. The single sample setting provides us with a general perspective: it shows that in all cases we are dealing with a single, finite example from some partially random, computable source. The type of the data is simply an assumption we make about its source, usually to let us divide the data in chunks, so that the similarities and differences between these chunks will let us reconstruct the source from the data. This view is instructive when we are faced with modern types of data like complex graphs, where the question of how to subdivide the data is not easily answered. The perspective of single sample statistics gives us a starting point: we can always consider the data a single sample from some computable distribution.
 
 \chapter{Introduction}
-
+\label{chapter:introduction}
 \input{1-introduction}
 
-\chapter{A safe approximation of Kolmogorov complexity}
+\pagebreak
+{
+\includegraphics[width=0.7\textwidth]{./images/xkcd.png}\\
+{source: \url{http://xkcd.com/505}}
+}
+\pagebreak
 
+\chapter{A safe approximation of Kolmogorov complexity}
+\label{chapter:safe}
 \input{2-safe}
 
 \chapter{The problem of sophistication}
 
 \input{3-problem}
-
-\chapter{Compression as network motif relevance}
+\label{chapter:problem}
+\chapter{Compression as measure of network motif relevance}
 
 \input{4-motifs}
-
-\chapter{A variational algorithm for the fractal iunverse problem}
+\label{chapter:motifs}
+\chapter{An Expectation-Maximization algorithm for the fractal inverse problem}
+\chaptermark{An EM algorithm for the inverse problem}
 
 \input{5-fractals}
-
-\chapter{Single sample inference}
+\label{chapter:fractals}
+\chapter{The single sample setting}
 
 \input{6-conclusion}
-
+\label{chapter:conlusion}
 \bibliographystyle{plain}
 \bibliography{thesis}
 
+\chapter*{Acknowledgements}
+
+\pb{Francisco and Luis}
+
+\chapter*{Nederlandse Samenvatting}
+
 \appendix 
-\chapter{Tutorials}
-\begin{summary}
-This appendix provides brief introductions to the subjects that are required to understand this thesis. They illustrate the use of our notation and provide a concise basis for readers who are well-versed in mathematics and computer science, but lack knowledge of these specific subjects. 
-\end{summary}
 
-\section{Kolmogorov complexity}
+\chapter{Proofs and derivations}
 
+\input{ap-proofs} 
 
-\section{Recommended literature}
+\chapter{Fractal experiments: full results}
 
-\chapter{Symbols and Terms}
+% \input{ap-fractals} 
 
-\begin{description}
- \item[$K(\cdot)$]
- \item[$k(\cdot)$]
- \item[Shannon Entropy]
-\end{description}
-
-\chapter{Algorithms and techniques}
-\chapter{Proofs}
-\chapter{index}
 \printindex
 
 \end{document}

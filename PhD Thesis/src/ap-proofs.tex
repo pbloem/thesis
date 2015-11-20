@@ -1,0 +1,299 @@
+\section{Chapter \ref{chapter:safe}}
+\renewcommand*{\thefootnote}{\arabic{footnote}} 
+
+\subsection{Turing Machines and lsc. Probability Semimeasures (Lemma~\ref{lemma:sampling-equivalence})} 
+\begin{definition}
+A function $f : {\mathbb B} \rightarrow {\mathbb R}$ is \emph{lower semicomputable (lsc.)} iff there exists a total, computable two-argument function $f': {\mathbb B} \times {\mathbb N} \rightarrow \mathbb Q$ such that: $\lim_{i \rightarrow \infty} f'(x, i) = f(x)$ and  for all $i$, $f'(x, i + 1) \geq f'(x, i)$.
+\label{definition:semicomputable}
+\end{definition}
+
+\begin{lemma}
+If $f$ is an lsc. probability semimeasure, then there exists a a function $f^*(x, i)$ with the same properties of the function $f'$ from Definition~\ref{definition:semicomputable}, and the additional property that all values returned by $f^*$ have finite binary expansions.
+\label{lemma:f-star}
+\end{lemma}
+\begin{proof}
+Let $x_j$ represent $x \in {\mathbb D}$ truncated at the first $j$ bits of its binary expansion and $x^j$ the remainder. Let $f^*(x, i) = f'(x, i)_i$. Since $f'(x, i) - f^*(x, i)_i$ is a value with $i+1$ as the highest non-zero bit in its binary expansion, $\lim_{i\rightarrow \infty} f^*(x, i) = \lim f'(x, i) = f(x)$.
+ 
+It remains to show that $f^*$ is nondecreasing in $i$. Let $x \geq y$. We will show that $x_j \geq y_j$, and thus $x_{j+1} \geq y_j$. If $x = y$ the result follows trivially. Otherwise, we have $x_j = x - x^j > y - x^j = y_j + y ^j - x^j \geq y_j - 2^{-j}$. Substituting $x = f'(x, i+1)$ and $y = f'(x,i)$ tells us that $f^*(x, i+1) \geq f^*(x, i)$
+\end{proof}
+
+\begin{theorem}
+Any TM, $T_q$, samples from an lsc. probability semimeasure.\label{theorem:back}
+\end{theorem}
+\begin{proof}
+We will define a program computing a function $p_q'(x, i)$ to approximate $p_q(x)$: Dovetail the computation of $T_q$ on all inputs $x \in \mathbb B$ for $i$ cycles.
+
+Clearly this function is nondecreasing. To show that it goes to $p(x)$ with $i$, we first note that for a given $i_0$ there is a $j$ such that, $2^{-j-1} < p_q(x) - p_q(x, i_0) \leq 2^{-j}$. Let $\{p_i\}$ be an ordering of the programs producing $x$, by increasing length, that have not yet stopped at dovetailing cycle $i_0$. There is an $m$ such that $\sum_{i=1}^m 2^{-|p_i|} \geq 2^{-j-1}$, since $\sum_{i=1}^{\infty}2^{-|p_i|} > 2^{-j-i}$. Let $i_1$ be the dovetailing cycle for which the last program below $p_{m+1}$ halts. This gives us $p_q(x) - p_q(x, i_1) \leq 2^{-j-1}$. Thus, by induction, we can choose $i$ to make $p(x) - p'(x, i)$ arbitrarily small. 
+\end{proof}
+
+\begin{theorem}
+Any lsc. probability semimeasure can be sampled by a TM.\label{theorem:forth}
+\end{theorem}
+\begin{proof}
+Let $p(x)$ be an lsc. probability semimeasure and $p^*(x, i)$ as in Lemma~\ref{lemma:f-star}. We assume---without loss of generality---that $p^*(x, 0) = 0$. Consider the following algoritheorem:
+
+\noindent\-\quad\textbf{initialize} $s \leftarrow \epsilon$, $r \leftarrow \epsilon$ \\
+\-\quad \textbf{for} $c = 1, 2, \ldots$: \\
+\-\quad\quad \textbf{for} $x \in \{b \in \B  : |b| \leq c\}$\\
+\-\quad\quad\quad $d \leftarrow p^*(x, c-i+1) - p^*(x, c-i)$\\
+\-\quad\quad\quad $s \leftarrow s + d$\\
+\-\quad\quad\quad add a random bit to $r$ until it is as long as $s$\\
+\-\quad\quad\quad \textbf{if} $r < s$ then return $x$ \\
+ 
+\noindent The reader may verify that this program dovetails computation of $p^*(x,i)$ for increasing $i$ for all $x$; the variable $s$ contains the summed probability mass that has been encountered so far. Whenever s is incremented, mentally associate the interval $(s,s+d]$ with outcome $x$. Since $p^*(x,i)$ goes to $p(x)$ as $i$ increases, the summed length of the intervals associated with $x$ goes to $p(x)$ and $s$ itself goes to $\overline{s} = \sum_x p(x)$. We can therefore sample from $p$ by picking a number r that is uniformly random on $[0, 1]$ and returning the outcome associated with the interval containing $r$. Since $s$ must have finite length (due to the construction of $p^*$), we only need to know $r$ up to finite precision to be able to determine which interval it falls in; this allows us to generate $r$ on the fly. The algoritheorem halts unless $r$ falls in the interval $[\overline{s}, 1]$, which corresponds exactly to the deficiency of $p$: if $p$ is a semimeasure, we expect the non-halting probability of a TM sampling it to correspond to $1-\sum_x p(x)$.
+\end{proof}
+Theorems~\ref{theorem:back}~and~\ref{theorem:forth} combined prove that the class of distributions sampled by Turing machines equals the lower semicomputable semimeasures (Lemma~\ref{lemma:sampling-equivalence}).
+
+\subsection{Domination of model class supersets}
+
+\begin{lemma}
+Let $C$ and $D$ be model classes. If $C \subseteq D$, then $m^D$ dominates $m^C$:
+\begin{align*}
+\frac{m^D(x)}{m^C(x)} \geq \alpha
+\end{align*}
+for some constant $\alpha$ independent of $x$.
+\label{lemma:subset-dominance}
+\end{lemma}
+\begin{proof}
+We can partition the models of $D$ into those belonging to $C$ and the rest, which we'll call $\overline{C}$. For any given enumeration of $D$, we get $m^D(x) = \alpha m^C(x) + (1-\alpha)m^{\overline{C}(x)}$. This gives us:
+\begin{align*}
+\frac{m^D(x)}{m^C(x)} = \alpha + (1-\alpha)\frac{m^{\overline{C}(x)}}{m^C(x)} \geq \alpha \p
+\end{align*}
+\end{proof}
+
+\subsection{Unsafe Approximation of $\id$ (Theorem~\ref{theorem:unsafe-id})}
+
+\begin{proof}
+\begin{align*} 
+p_q&\left({\id}^C(x, y) - \id(x, y) \geq k \right) = \\
+ &p_0\left(\max\left[\ok^C(x \mid f(x)), \ok^C(f(x)\mid x)\right] - \max\left[K(x\mid f(x)), K(f(x)\mid x))\right] \geq k\right) \p\\
+p_q&\left(|x| - {\id}^C(x, y) \geq 2k\right) \;\leq\; p_0\left(|x| - \ok^C(x \mid f(x)) \geq 2k\right)\\
+&\leq \;p_0\left(|x| - \kappa^C(x) \geq k \,\lor\, \kappa^C(x) - \ok^C(x \mid f(x)) \geq k\right)\\
+&\leq \;p_0\left(|x| - \kappa^C(x) \geq k \right) \;+\; p_0\left(\kappa^C(x) - \kappa^C(x \mid f(x)) \geq k\right) \;\leq\; 2^{-k} + cb^{-k} \p
+\end{align*}
+$K$ can invert $f(x)$, so 
+\begin{align*}
+\id(x, y) = \max\left[K(x\mid f(x)), K(f(x)\mid x)\right] = \max\left[|f^*|, |f^*_{\text{inv}}|\right] < c_f\end
+{align*}
+where $f^*$ and $f^*_{\text{inv}}$ are the shortest program to compute $f$ on $U$ and the shortest program to compute the inverse of $f$ on $U$ respectively. 
+ 
+\begin{align*}
+p_q&\left({\id}^C(x,y) - \id(x,y) \geq k\right) + p_q\left(|x| - {\id}^C(x,y) \geq k\right)\\
+&\geq\; p_q\left({\id}^C(x, y) - \id(x, y) \geq k \lor|x| - {\id}^C(x, y) \geq k\right)\\
+&\geq\; p_q\left(|x| - \id(x, y) \geq k \right) \geq\; p_0\left(|x| - c_f \geq k\right) = \sum\nolimits_{i \geq k- c_f} s(i)\p
+\end{align*}
+Which gives us:\belowdisplayskip=-12pt
+\begin{align*}
+p_q&\left({\id}^C(x,y) - \id(x,y) \geq k\right) \\
+&\geq \; - p_q(|x| - {\id}^C \geq k) + \sum\nolimits_{i \geq k- |f|} s(i) \geq- cb^{-k} + \sum\nolimits_{i \geq k- |f|} s(i) \\
+& \geq s(k-|f|) - cb^{-k} \geq c's(k) \quad\quad\text{for the right  $c'$.}
+\end{align*}
+\end{proof}
+
+\begin{corollary}
+Under the assumptions of Theorem~\ref{theorem:unsafe-id}, $\ok^C(x\mid y)$ is an unsafe approximation for $K(x\mid y)$ against $q$. 
+\end{corollary}
+\begin{proof}
+Assuming $\ok^C$ is safe, then since $\max$ is safety-preserving (Lemma~\ref{lemma:safety-preserving}), $\id^C$ should be safe for $\id$. Since it isn't, $\ok^C$ cannot be safe.
+\end{proof}
+
+\subsection{Safe Approximation of $\id$ (Theorem~\ref{theorem:safe-id})}
+
+\begin{lemma}
+If $q$ samples $x$ and $y$ independently from models in $C$, then $\kappa^C(x\mid y)$ is a $2$-safe approximation of $-\log m(x\mid y)$ against $q$.
+\label{lemma:conditional-safety}  
+\end{lemma}
+\begin{proof}\belowdisplayskip=-12pt
+Let $q$ sample $x$ from $p_r$ and $y$ from $p_s$.
+\begin{align*}
+p_q&(-\log m^C(x\mid y)  + \log m(x\mid y) \geq k) 		&&= p_q(m(x \mid y) / m^C(x \mid y) \geq 2^k) \\ 
+&\leq \; 2^{-k}E\left[m(x\mid y)/m^C(x\mid y)\right] 	&&= 2^{-k} \sum_{x, y} p_s(y)m(x \mid y) \frac{p_r(x)}{m^C(x\mid y)}  \\
+&\leq \; c 2^{-k} \sum_{x, y} p_s(y)m(x \mid y) \frac{m^C(x\mid y)}{m^C(x\mid y)} &&\leq c 2^{-k} \sum_{x, y} p_s(y)m(x \mid y) \leq c 2^{-k}\p
+\end{align*} 
+\end{proof}
+Since $m$ and $K$ mutually dominate, $- \log m^C$ is $2$-safe for $K(x\mid y)$, as is $\ok(x\mid y)$.
+
+\begin{lemma}
+If $f_a$ is safe for $f$ against $q$, and $g_a$ is safe for $g$ against $q$, then $\max (f_a, g_a)$ is safe for $\max (f, g)$ against $q$.\footnote{We will call such operations \emph{safety preserving}}
+
+\label{lemma:safety-preserving} 
+\end{lemma}
+\begin{proof}\belowdisplayskip=-12pt
+We first partition $\B$ into sets $A_k$ and $B_k$:
+
+\begin{description}
+\item[$A_k = \{x:f_a(x) - f(x) \geq k \lor g_a - g(x) \geq k \}$] Since both $f_a$ and $g_a$ are safe, we know that $p_q(A_k)$ will be bounded above by the sum of two inverse exponentials in $k$, which from a given $k_0$ is itself bounded by an exponential in $k$.
+
+\item[$B_k = \{x:f_a(x) - f(x) < k \wedge g_a - g(x) < k \}$] We want to show that $B$ contains no strings with error over $k$. If, for a given $x$ the left and right $\max$ functions in $\max \left(f_a, g_a\right) - \max \left(f, g\right)$ select the outcome from matching  functions, and the error is below $k$ by definition. Assume then, that a different function is selected on each side. Without loss of generality, we can say that $\max(f_a, g_a) = f_a$ and $\max(f, g)= g$. This gives us: $\max(f_a, g_a) - \max(f, g) = f_a - g \leq f_a - f \leq k$.
+\end{description}
+We now have $p(B_k) = 0$ and $p(A_k) \leq cb^{-k}$, from which the theorem follows.
+\end{proof}
+
+\begin{corollary}
+$\id^C$ is a safe approximation of $\id$ against sources that sample $x$ and $y$ independently from models in $C$.
+\end{corollary}
+
+\subsection{Safe approximation of $\nid$ (Theorem~\ref{theorem:safe-nid})}
+
+\begin{lemma}
+Let $f$ and $g$ be two functions, with $f_a$ and $g_a$ their safe approximations against adversary $p_q$. Let $h(x) = f(x)/g(x)$ and $h_a(x) = f_a(x)/g_a(x)$. Let $c > 1$ and $0 < \epsilon \ll 1$ be constants such that $p_q(f_a(x) \geq c) \leq \epsilon$ and $p_q(g_a(x) \geq c) \leq \epsilon$. We can show that for some $b > 1$ and $c > 0$
+\[
+p_q\left(\left|\frac{h(x)}{h_a(x)} - 1\right| \geq \frac{k}{c}\right) \leq cb^{-k} + 2\epsilon \p
+\]
+\end{lemma}
+\begin{proof}
+We will first prove the bound from above, using $f_a$'s safety, and then the bound from below using $g_a$'s safety. 
+\begin{align*}
+p_q&\left(\frac{h}{h_a} \leq 1 - \frac{k}{c}\right) \;\leq\; p_q\left(\frac{h}{h_a} \leq 1 - \frac{k}{c} \;\&\; c < f_a \right) + \epsilon \;\leq\; p_q\left(\frac{h}{h_a} \leq 1 - \frac{k}{f_a} \right) + \epsilon \\
+ &= p_q\left(\frac{f}{f_a}\frac{g_a}{g} \leq 1 - \frac{k}{f_a} \right) + \epsilon \leq p_q\left(\frac{f}{f_a} \leq 1 - \frac{k}{f_a} \right) + \epsilon \\
+ &= p_q\left(\frac{f + k}{f_a} \leq 1 \right) + \epsilon \;=\;p_q\left(f_a - f \geq k \right) + \epsilon \;\leq\; c_f{b_f}^{-k} + \epsilon\p
+\end{align*}
+The other bound we prove similarly. Combining the two, we get\belowdisplayskip=-12pt
+\begin{align*}
+p_q\left(h/h_a \notin \left(k/c - 1, k/c + 1\right)\right) \leq c_f{b_f}^{-k} + c_g{b_g}^{-k} + 2\epsilon \;\leq\; c'b'^{-k} + 2\epsilon \p
+\end{align*}
+\end{proof} 
+Theorem~\ref{theorem:safe-nid} follows as a corollary.
+
+\section{Chapter \ref{chapter:problem}}
+
+\begin{lemma}[Invariance of function complexity]
+Let $\psi$ and $\eta$ be any two acceptable numberings Let $f$ be any partial computable function. There exists a constant $c$ independent of $f$ such that \belowdisplayskip=-12pt
+\[
+\left| C^{\K,\psi}(f) - C^{\K, \eta}(f)\right | \leq c \;\text{and}\; \left| C^{\C,\psi}(f) - C^{\C, \eta}(f)\right | \leq c \p
+\] \label{lemma:invariance}
+\end{lemma}
+\begin{proof}
+Let $g(i)$ be the function such that $\psi_i=\eta_{g(i)}$.
+\begin{align*}
+C^{\C,\psi}&(f) = \min\left\{ C^{\C,\psi}(i) : \psi_i= f\right\} 
+\geq \min\left\{ C^{\C, \eta}(i) : \psi_i= f\right\} - c\\
+&= \min\left\{ C^{\C, \eta}(i) : \eta_{g(i)}= f\right\} - c
+= \min\left\{ C^{\C, \eta}(g(i)) : \eta_{g(i)}= f\right\} - c'\\
+&\geq \min\left\{ C^{\C, \eta}(j) : \eta_j= f\right\} - c' 
+= C^{\C, \eta}(f).
+\end{align*}
+Reverse $\psi$ and $\eta$ for the opposite inequality. The same proof holds for $C^\K$.
+\end{proof}
+
+\section{Chapter \ref{chapter:motifs}}
+
+\paragraph{Confidence Intervals for the Degree-Sequence Model}
+\label{section:confidence-intervals}
+
+As mentioned in the body of the text, even with the highly optimized implementations described in \cite{charo2010efficient} and \cite{kim2012constructing} sampling can be slow for large graphs. In our implementation, a modern day laptop can take several minutes to produce a single sample for a random graph with $10^4$ nodes and $10^5$ links. However, we are not interested in precision beyond several orders of magnitude, so if we have a reliable method for determining confidence intervals, we can use those to provide us with safe bounds.
+Since we are dealing with a log-normal source, we cannot simply use twice the standard error of the mean to approximate our error bars. We will use the parametric bootstrap procedure provided in \cite{angus1994bootstrap,zhou1997confidence}. To substantiate this method, we test the coverage of the two-sided symmetric confidence interval on three datasets. We proceed as follows: first we estimate the true value of $|\cG_D|$ with the ML estimator, using $10^6$ samples. Call this value $g$. We use this as our gold standard. We then sample a small number (5, 10, 20) of graphs and their associated probabilities. Using the bootstrap method we construct a two-sided symmetric confidence interval with $\alpha = 0.05$ on this sample. We repeat the procedure of sampling data and constructing an interval 5000 times and report the proportion of times $g$ was inside the confidence interval. If the bootstrap method is accurate, the resulting value should be close to 0.95. We use the following datasets:
+  \begin{description}
+  \item[cattle] Observed dominance behaviors between cows. A directed graph with 28 nodes, and 217 links. \cite{schein1955social,konect:2015:moreno_cattle}
+  \item[revolution] Affiliations of 136 people to 5 organizations encoded as a bipartite graph. 141 nodes and 160 links. \cite{konect:2015:brunson_revolution}
+  \item[random] A simple undirected random graph of 50 nodes,with  each pair of distinct nodes connected with probability $0.5$.
+  \end{description}
+As Table~\ref{table:coverage-experiment} shows, this method becomes relatively reliable at around 10 samples, although the intervals are quite large at that sample size.
+
+\begin{table}
+  {\centering
+  \begin{tabular}{|r|r r|r r|r r|}
+  \hline
+   &  \multicolumn{2}{c|}{5 samples} & \multicolumn{2}{c|}{10 samples}  & \multicolumn{2}{c|}{20 samples}  \\
+  cattle  & 0.93 & 511 (379) & 0.94 & 194 (94.6) & 0.94 & 107 (35.3) \\
+  revolution   & 0.89 & 147 (120) & 0.92 & 59.3 (29.2) & 0.93 & 33.5 (11.3) \\
+  random  & 0.91 & 108 (97.0) & 0.94 & 44.7 (24.5) & 0.94 & 25.3 (9.44) \\
+  \hline
+  \end{tabular}
+  }
+
+  \caption{Coverage and interval length at $\alpha=0.05$ for three small datasets. The coverage is the number of times the true value $g$ was contained in the interval, over 5000 trials. The length is the mean length of these intervals in bits. The standard deviation is given in parentheses. } 
+  \label{table:coverage-experiment}
+\end{table}
+
+Now, when we use $L^\text{DS}$ as a base model in $L^\text{motif}$, the intractable value $|\cG_D|$ occurs in two places: the encoding of the subgraph, and the encoding of the template graph. Since we use our estimator for both, we must be careful to end up with a correct confidence interval for the resulting motif code. Let $D'$ be the degree sequence of the subgraph, and $D$ be the degree sequence of the template. Then, we can split the total code length into three components: $\log |\cG_{D'}|$, $\log |\cG_D|$ and $R$. $R$ is the sum of all parts of the code that we can compute exactly, including the sizes and sequences of the motif and template graph (ie. everything but $\log |\cG_{D'}|$ and $\log |\cG_D|$). The total codelength is described by $\log |\cG_{D'}| + \log |\cG_D| + R$, where the first two terms require the use of the estimator. Let $Q_m$ and $Q_h$ be random variables representing the inverse probability of graphs sampled from the importance sampling algorithm, for the degree sequence of the motif and the template graph respectively. In other words, the true codelength for the motif code is:
+\begin{align*}
+& \log E Q_m + \log  E Q_h + R \\ 
+= & \log E Q_m E Q_h + R \\
+= & \log E [Q_m Q_h] + R
+\end{align*}
+where the last line follows from the fact $Q_m$ and $Q_h$ are independent. So to get a correct confidence interval, we can take the same number of samples of both $Q_m$ and $Q_h$, multiply their probabilities, and perform the bootstrap analysis on the list of these multiplied probabilities (since we are summing the logarithms of log-normally distributed variables, the result is log-normally distributed as well). 
+
+\section{Chapter \ref{chapter:fractals}}
+
+
+\subsection{Derivations}
+
+Transforming a generic spherical MVN by a similitude can be cast as the transformation of $\cN_0$ by two similitudes:
+\begin{align*}
+f_{t, R, s}(\cN_{t_0, {s_0}^2 I})(x) &= f_{t, R, s}(f_{t_0, R_0, s_0}(\cN_0))(x) = f_{ sRt_0+t, RR_0,ss_0}(\cN_0)(x) \\
+&= (ss_0)^{-H} \cN_0\left(\frac{1}{ss_0} {R_0}^T R^T x - \frac{s}{ss_0} {R_0}^Tt_0 - \frac{1}{ss_0} {R_0}^TR^Tt \right) \\
+&= (ss_0)^{-H} \cN_0\left(\frac{1}{ss_0} x - \frac{1}{s_0} {R}t_0 - \frac{1}{ss_0} t \right) \\
+&= (ss_0)^{-H} \cN_0\left(\frac{1}{ss_0} {R_0}^T R^T x - \frac{s}{ss_0} {R_0}^Tt_0 - \frac{1}{ss_0} {R_0}^TR^Tt \right) \\
+&=  (2\pi)^{-\frac{H}{2}} (ss_0)^{-H} \exp \left[- \frac{1}{2{s_0}^2s^2}\left\| x- t - s R t_0 \right \|^2\right]
+\end{align*}
+
+\paragraph{The depth $v$ and weights $w$} For the depth priors $v$, the $Q$-function, with constant terms omitted, reduces to:
+\begin{align*}
+Q(v) &= \sum_{i,j} P_{ij} \ln v_{|c_j|} \\ 
+&= \sum_{d \in [0,D]} \sum_{j: |c_j| = d} P_{ij} \ln v_d = \sum_{d \in [0,D]} \left[\sum_{c: |c| = d} P_{x, c}\right] \ln v_d\\
+&= \sum_{d \in [0,D]} p_d \ln v_d \;\;\text{with $p_d = \sum_{c: |c| = d} P_{x, c} $}  \\
+\end{align*}
+For $v$, we have the additional constraint that $\sum_d v_d = 1$, which we can take into consideration with lagrange multipliers, giving us the objective function ${\cal L}(v, \lambda) = p_d/v_d - \lambda\sum_d v_d - \lambda$. We differentiate and set equal to zero, giving us the equations $p_d/v_d - \lambda = 0$ amd $\sum_i v_i -1 =0$. Solving these gives us:
+\[
+\hat v_d = \frac{p_d}{\sum_i p_i}
+\]
+
+Finding $w_k$ follows the same principle as the depths. The $Q$-function reduces to:
+\[
+Q(w) = \sum_{k} p_k \ln w_k
+\]
+
+Using Lagrange multipliers to incorporate the constraint that $\sum_i w_i = 1$, we find
+\[
+\hat w_k = p^k / \sum_{i} p^i \p
+\]
+
+\paragraph{The translations $t_k$} The optimal translation can be found by straightforward differentiation:
+\begin{align*}
+\frac{\partial Q(t_k)}{\partial t_k} &= 
+- \sum_{i,j} P_{ij}^k \frac{1}{{s_j}^2{s_k}^2}\frac{\left \|  y_i - t_k - s_kR_kt_j \right\|^2}{\partial t_k}
+\\
+&= \sum_{i,j} P_{ij}^k \frac{1}{{s_j}^2{s_k}^2} \left(y_i - t_k - s_kR_kt_j\right)^T \\
+\end{align*}
+
+This sum represents a row vector, which we transpose to get a column vector, and set equal to zero to get $\hat t_k$:
+\begin{align*}
+0 &= \frac{1} {{s_k}^2} \left (\sum_{i,j} P^k_{ij} {s_j}^{-2} y_i  - \sum_{i,j} P^k_{ij} {s_j}^{-2} t_k - s_kR_k \sum_{i,j} P^k_{ij} {s_j}^{-2} t_j\right) \\
+\end{align*}
+
+Let $Z = \text{diag}({s_1}^{-2}, \ldots, {s_M}^{-2})$, we can then rewrite to matrix notation:
+\begin{align*}
+\hat t_k &= \frac{YP^kZ1_M - s_kR_k\;T_j(P^kZ)^T1_N}{{1_N}^TP^kZ1_M} 
+\end{align*} 
+
+\paragraph{The rotations $R_k$}
+\begin{align*} 
+Q(R_k) &= - \frac{1}{2}\sum_{i,j} P^k_{ij} \frac{1}{{s_j}^2{s_k}^2} \left\| y_i - t_k - s_kR_k t_j \right\|^2\\
+&= - \frac{1}{2}\sum_{i,j} P^k_{ij} {s_j}^{-2} \left\| \left(y_i - y^k\right) - s_kR_k \left(t_j-t^k\right) \right\|^2 \p 
+\end{align*}
+Let ${y^k_i} = y_i - y^k$ and ${t^k_j} = t_j - t^k$, ie. mean-centered versions of the data points and the component means. Let $Y^k$ and ${T^k}$ be the corresponding matrices with these vectors as columns. We multiply out the inner product to get
+\begin{align*}
+Q(R_k) &= - \frac{1}{2}\sum_{i,j} P^k_{ij} {s_j}^{-2} \left[ {y_i^k}^T{y_i^k} - 2 s_k {y_i^k}^TR_k{t_j^k} + {t_j^k}^T{t_j^k} \right] \\
+\end{align*}
+from which we remove the terms and global factors that are independent of $R_k$:
+\begin{align*}
+Q(R_k)&= \sum_{i,j} P^k_{ij}\; {s_j}^{-2}\; {y_i^k}^TR_k{t_j^k}
+\end{align*}
+Which in matrix notation becomes:
+\begin{align*} 
+Q(R_k) &= \text{tr}((P^k Z)^T {Y^k}^TR_kT^k) = \text{tr}(T^k Z {P^k}^T{Y^k}^TR_k) = \text{tr}([Y^kP^kZ{T^k}^T]^TR_k) \p
+\end{align*}
+Where we use the fact that $\text{tr}(A^TB) = \sum_{i,j}(A\circ B)_{ij}$ and the fact that the trace is invariant under cyclic permutations.
+
+\paragraph{The scaling $s_k$}
+We derive the scaling by filling in $\hat t_k$ and solving for $\partial Q(S_k)/\partial s_k$.
+\begin{align*}
+\frac{\partial Q(s_k)}{\partial s_k} &=  \frac{- p^k H \ln s_k - \frac{1}{2}\sum_{i,j} (P^kZ)_{ij} {s_k}^{-2} \left\|y_i - t_k - s_k R_k t_j \right\|^2}{\partial s_k}\\
+\frac{\partial Q(s_k)}{\partial s_k} &= - p^k H {s_k}^{-1} - \frac{1}{2}\sum_{i,j} (P^kZ)_{ij} \left(-2{s_k}^{-3} {y^k_i}^T y^k_i + 2{s_k^{-2}} {y^k_i}^TR_kt_j^k \right) \\
+&= -p^k H {s_k}^{-1} + {s_k}^{-3} \sum_{i, j} (P^kZ)_{ij}{s_k}^{-3} {y^k_i}^T y^k_i - s_k^{-1} \sum_{i, j}(P^kZ)_{ij}{s_k^{-2}} {y^k_i}^TR_kt_j^k
+\end{align*}
+In matrix notation:
+\begin{align*}
+0 &= {s_k}^{-2} \text{tr}({\ol{Y}^k}^T\text{d}(P^kZ1_M)\ol{Y}^k) + {s_k}^{-1} \text{tr}(\ol{T}^kZ{P^k}^T{\ol{Y}^k}^TR_k) -p^k H \p
+\end{align*}
